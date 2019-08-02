@@ -1,4 +1,4 @@
-import cognitoService from 'app/services/cognitoService';
+import cognitoService from 'app/auth/services/cognitoService';
 import * as Actions from 'app/store/actions';
 import * as UserActions from './user.actions';
 import history from '@history';
@@ -6,8 +6,7 @@ import history from '@history';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 
-export const submitLoginWithCognito = ({username, password}) =>
-{
+export const submitLoginWithCognito = ({ username, password }) => {
     return (dispatch) => {
         cognitoService.signIn(username, password)
             .then((user) => {
@@ -26,7 +25,7 @@ export const submitLoginWithCognito = ({username, password}) =>
                 }
             })
             .catch((error) => {
-                dispatch(Actions.showMessage({message: error.message}));
+                dispatch(Actions.showMessage({ message: error.message }));
                 if (error.code === 'UserNotConfirmedException') {
                     cognitoService.resendCode(username)
                         .then(() => {
@@ -34,7 +33,7 @@ export const submitLoginWithCognito = ({username, password}) =>
                         })
                         .catch((error) => {
                             return dispatch({
-                                type   : LOGIN_ERROR,
+                                type: LOGIN_ERROR,
                                 payload: error
                             });
                         })
@@ -45,23 +44,22 @@ export const submitLoginWithCognito = ({username, password}) =>
                             history.push({ pathname: `/forgot-password-submit/${username}` })
                         })
                         .catch((error) => {
-                            dispatch(Actions.showMessage({message: error.message, variant: 'error'}));
+                            dispatch(Actions.showMessage({ message: error.message, variant: 'error' }));
                             return dispatch({
-                                type   : LOGIN_ERROR,
+                                type: LOGIN_ERROR,
                                 payload: error
                             });
                         })
                 }
                 return dispatch({
-                    type   : LOGIN_ERROR,
+                    type: LOGIN_ERROR,
                     payload: error
                 });
             })
     }
 }
 
-export const submitConfirmLoginWithCognito = ({code}) =>
-{
+export const submitConfirmLoginWithCognito = ({ code }) => {
     return (dispatch, getState) => {
         const user = getState().auth.user;
         cognitoService.confirmSignIn(user, code, null)
@@ -72,9 +70,9 @@ export const submitConfirmLoginWithCognito = ({code}) =>
                 });
             })
             .catch((error) => {
-                dispatch(Actions.showMessage({message: error.message}));
+                dispatch(Actions.showMessage({ message: error.message }));
                 return dispatch({
-                    type   : LOGIN_ERROR,
+                    type: LOGIN_ERROR,
                     payload: error
                 });
             })

@@ -1,14 +1,14 @@
 const settingsConfig = {
-    layout          : {
-        style : 'layout2',
-        config: {} // checkout layout configs at app/ownin-configs/layout-1/Layout1Config.js
+    layout: {
+        style: 'layout',
+        config: {}
     },
     customScrollbars: true,
-    theme           : {
-        main   : 'greeny',
-        navbar : 'mainThemeLight',
+    theme: {
+        main: 'default',
+        navbar: 'mainThemeLight',
         toolbar: 'mainThemeLight',
-        footer : 'mainThemeLight'
+        footer: 'mainThemeLight'
     }
 };
 

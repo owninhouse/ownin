@@ -1,9 +1,9 @@
 import history from '@history';
-import {setDefaultSettings, setInitialSettings} from 'app/store/actions/ownin';
+import { setDefaultSettings, setInitialSettings } from 'app/store/actions/ownin';
 import _ from '@lodash';
 import store from 'app/store';
 import * as Actions from 'app/store/actions';
-import cognitoService from 'app/services/cognitoService';
+import cognitoService from 'app/auth/services/cognitoService';
 
 export const SET_USER_DATA = '[USER] SET DATA';
 export const SET_USER_COGNITO = '[USER] SET COGNITO'
@@ -13,8 +13,7 @@ export const USER_LOGGED_OUT = '[USER] LOGGED OUT';
 /**
  * Set User Data Cognito
  */
-export function setUserDataCognito(authUser)
-{
+export function setUserDataCognito(authUser) {
     return (dispatch, getState) => {
 
         const owninDefaultSettings = getState().ownin.settings.defaults;
@@ -24,13 +23,13 @@ export function setUserDataCognito(authUser)
          */
         const user = _.merge({},
             {
-                uid : authUser.attributes.sub,
+                uid: authUser.attributes.sub,
                 from: 'cognito',
                 role: ["user"],
                 data: {
                     displayName: authUser.username,
-                    email      : authUser.attributes.email,
-                    settings   : {...owninDefaultSettings}
+                    email: authUser.attributes.email,
+                    settings: { ...owninDefaultSettings }
                 }
             }
         );
@@ -43,14 +42,13 @@ export function setUserDataCognito(authUser)
 /**
  * Set User Data Cognito
  */
-export function setUserDataFromAdminCognito(user)
-{
+export function setUserDataFromAdminCognito(user) {
     return (dispatch) => {
         /*
         Set User Data
          */
         dispatch({
-            type   : SET_USER_COGNITO,
+            type: SET_USER_COGNITO,
             payload: user
         })
     }
@@ -59,8 +57,7 @@ export function setUserDataFromAdminCognito(user)
 /**
  * Set User Data
  */
-export function setUserData(user)
-{
+export function setUserData(user) {
     return (dispatch) => {
 
         /*
@@ -72,7 +69,7 @@ export function setUserData(user)
         Set User Data
          */
         dispatch({
-            type   : SET_USER_DATA,
+            type: SET_USER_DATA,
             payload: user
         })
     }
@@ -81,11 +78,10 @@ export function setUserData(user)
 /**
  * Update User Settings
  */
-export function updateUserSettings(settings)
-{
+export function updateUserSettings(settings) {
     return (dispatch, getState) => {
         const oldUser = getState().auth.user;
-        const user = _.merge({}, oldUser, {data: {settings}});
+        const user = _.merge({}, oldUser, { data: { settings } });
 
         updateUserData(user);
 
@@ -96,8 +92,7 @@ export function updateUserSettings(settings)
 /**
  * Update User Shortcuts
  */
-export function updateUserShortcuts(shortcuts)
-{
+export function updateUserShortcuts(shortcuts) {
     return (dispatch, getState) => {
         const user = getState().auth.user;
         const newUser = {
@@ -117,8 +112,7 @@ export function updateUserShortcuts(shortcuts)
 /**
  * Remove User Data
  */
-export function removeUserData()
-{
+export function removeUserData() {
     return {
         type: REMOVE_USER_DATA
     }
@@ -127,14 +121,13 @@ export function removeUserData()
 /**
  * Logout
  */
-export function logoutUser()
-{
+export function logoutUser() {
 
     return (dispatch, getState) => {
 
         const user = getState().auth.user;
 
-        if ( !user.role || user.role.length === 0 )// is guest
+        if (!user.role || user.role.length === 0)// is guest
         {
             return null;
         }
@@ -143,7 +136,7 @@ export function logoutUser()
             pathname: '/'
         });
 
-        cognitoService.signOut();                
+        cognitoService.signOut();
 
         dispatch(setInitialSettings());
 
@@ -156,18 +149,17 @@ export function logoutUser()
 /**
  * Update User Data
  */
-function updateUserData(user)
-{
-    if ( !user.role || user.role.length === 0 )// is guest
+function updateUserData(user) {
+    if (!user.role || user.role.length === 0)// is guest
     {
         return;
     }
 
     cognitoService.updateUserData(user)
         .then(() => {
-            store.dispatch(Actions.showMessage({message: "User data saved with api"}));
+            store.dispatch(Actions.showMessage({ message: "User data saved with api" }));
         })
         .catch(error => {
-            store.dispatch(Actions.showMessage({message: error.message}));
+            store.dispatch(Actions.showMessage({ message: error.message }));
         });
 }

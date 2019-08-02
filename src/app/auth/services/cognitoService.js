@@ -1,12 +1,9 @@
-import Amplify, { Auth } from 'aws-amplify'
+import { Auth } from 'aws-amplify'
 import { AWS_COGNITO_CONFIG } from './cognitoServiceConfig';
 
 class cognitoService {
 
-  init = () => {
-    Auth.configure(AWS_COGNITO_CONFIG);
-    Amplify.configure(AWS_COGNITO_CONFIG);
-  }
+  init = () => Auth.configure(AWS_COGNITO_CONFIG);
 
   isAuthenticated = () => Auth.currentAuthenticatedUser()
     .then(() => true)
@@ -14,10 +11,10 @@ class cognitoService {
 
   getUserData = () => Auth.currentUserInfo();
 
-  signUp = (username,  password, email, phone_number) => Auth.signUp({ username,  password, attributes: { email, phone_number } });
+  signUp = (username, password, email, phone_number) => Auth.signUp({ username, password, attributes: { email, phone_number } });
 
   confirmSignUp = (username, code) => Auth.confirmSignUp(username, code)
-  
+
   signIn = async (username, password) => Auth.signIn(username, password);
 
   confirmSignIn = async (user, code, mfaType) => Auth.confirmSignIn(user, code, mfaType);
